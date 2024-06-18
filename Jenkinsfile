@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         NEXUS_CREDS = credentials('nexus_creds')
-        NEXUS_DOCKER_REPO = 'localhost:8082'
+        NEXUS_DOCKER_REPO = '127.0.0.1:8082'
     }
     stages {
         stage('Building image') {
