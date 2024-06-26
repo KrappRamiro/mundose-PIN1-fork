@@ -1,14 +1,10 @@
 pipeline {
     agent any
-    environment {
-        NEXUS_CREDS = credentials('nexus_creds')
-        NEXUS_DOCKER_REPO = '127.0.0.1:8082'
-    }
     stages {
         stage('Building image') {
             steps {
                 sh '''
-          docker build -t mundose-pin1 -t $NEXUS_DOCKER_REPO/mundose-pin1:latest .
+          docker build -t mundose-pin1 -t krappramiro/mundose-pin1-fork:latest .
           '''
             }
         }
@@ -19,10 +15,10 @@ pipeline {
         }
         stage('Docker Login') {
             steps {
-                echo 'Nexus Docker Repository Login'
+                echo 'Docker Registry Login'
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'nexus_creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                        sh ' echo $PASS | docker login -u $USER --password-stdin $NEXUS_DOCKER_REPO'
+                    withCredentials([usernamePassword(credentialsId: 'docker_creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                        sh ' echo $PASS | docker login -u $USER --password-stdin'
                     }
                 }
             }
@@ -30,7 +26,7 @@ pipeline {
         stage('Docker Push') {
             steps {
                 echo 'Pushing Image to docker hub'
-                sh 'docker push $NEXUS_DOCKER_REPO/mundose-pin1:latest'
+                sh 'docker push krappramiro/mundose-pin1-fork:latest'
             }
         }
     }
